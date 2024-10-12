@@ -11,4 +11,5 @@ struct constants
 	static constexpr float ball_speed{ 6.0f };
 	static constexpr float paddle_width{ 60.0f };
 	static constexpr float paddle_height{ 50.0f };
+	static constexpr float paddle_speed{ 8.0f };
 };

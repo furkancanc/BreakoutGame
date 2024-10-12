@@ -21,7 +21,7 @@ int main()
 	ball the_ball(constants::window_width / 2.0f, constants::window_height / 2.0f);
 
 	// Create a paddle object at the bottom fo the screen in the middle
-	paddle the_paddle(constants::window_width / 2.0f - constants::paddle_width / 2.0f, constants::window_height - constants::paddle_height);
+	paddle the_paddle(constants::window_width / 2.0f, constants::window_height - constants::paddle_height);
 
 	// Create the game's window using an object of class RenderWindow
 	// The constructor takes an SFML 2D vectorw ith the window dimensions
