@@ -24,5 +24,8 @@ public:
 	// Implement the pure virtual functions
 	void update() override;
 	void draw(sf::RenderWindow& window) override;
+	void move_up() noexcept override;
+	void move_left() noexcept override;
+	void move_right() noexcept override;
 };
 

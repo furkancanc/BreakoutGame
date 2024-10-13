@@ -39,7 +39,14 @@ protected:
 	// This is the distance the ball moves between screen updates
 	sf::Vector2f velocity;
 public:
-	// Helper functions
+	// Helper functions inherited from parent class
+	// float x();
+	// float y();
+
+	// Helper functions to change the sprite's direction
+	virtual void move_up() noexcept = 0;
+	virtual void move_left() noexcept = 0;
+	virtual void move_right() noexcept = 0;
 
 	// Pure virtual functions inherited from parent class
 	// virtual void update() = 0;
