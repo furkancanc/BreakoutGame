@@ -7,6 +7,7 @@
 #include "constants.h"
 #include "background.h"
 #include "ball.h"
+#include "brick.h"
 #include "paddle.h"
 #include "interactions.h"
 
@@ -23,6 +24,24 @@ int main()
 
 	// Create a paddle object at the bottom fo the screen in the middle
 	paddle the_paddle(constants::window_width / 2.0f, constants::window_height - constants::paddle_height);
+
+	// Create the grid of bricks
+	// We will use an std::vector to store them
+	std::vector<brick> bricks;
+
+	for (unsigned i = 0; i < constants::brick_columns; ++i)
+	{
+		for (unsigned j = 0; j < constants::brick_rows; ++j)
+		{
+			// Calculate the brick's position
+			float x = constants::brick_offset + (i + 1) * constants::brick_width;
+			float y = (j + 1) * constants::brick_height;
+
+			// Create the brick object
+			bricks.emplace_back(x, y);
+		}
+	}
+
 
 	// Create the game's window using an object of class RenderWindow
 	// The constructor takes an SFML 2D vectorw ith the window dimensions
@@ -70,12 +89,24 @@ int main()
 		the_background.update();
 		the_ball.update();
 		the_paddle.update();
+
+		for (auto& b : bricks)
+		{
+			b.update();
+		}
+
 		handle_collision(the_ball, the_paddle);
 
 		// Display the updated graphics
 		the_background.draw(game_window);
 		the_ball.draw(game_window);
 		the_paddle.draw(game_window);
+
+		for (auto& b : bricks)
+		{
+			b.draw(game_window);
+		}
+
 		game_window.display();
 	}
 }
