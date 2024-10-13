@@ -9,5 +9,6 @@ int main()
 {
 	// Create an instance of the game, intialize it and run it
 	game the_game;
+	the_game.reset();
 	the_game.run();
 }
