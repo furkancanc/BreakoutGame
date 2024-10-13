@@ -21,11 +21,14 @@ public:
 	// y increases downwards
 	ball(float x, float y);
 
+	// Implement the helper functions
+	void move_up() noexcept override;
+	void move_down() noexcept override;
+	void move_left() noexcept override;
+	void move_right() noexcept override;
+	
 	// Implement the pure virtual functions
 	void update() override;
 	void draw(sf::RenderWindow& window) override;
-	void move_up() noexcept override;
-	void move_left() noexcept override;
-	void move_right() noexcept override;
 };
 
