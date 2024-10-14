@@ -67,7 +67,7 @@ void ball::update()
 	}
 	if (y() > constants::window_height)
 	{
-		velocity.y = -velocity.y;
+		destroy();
 	}
 }
 

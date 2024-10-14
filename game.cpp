@@ -55,11 +55,30 @@ game::game()
 {
 	// Limit the framerate
 	game_window.setFramerateLimit(60);						// Max rate is 60 frames per second
+
+	// Load a font from file
+	verdana.loadFromFile("verdana.ttf");
+
+	// Configure our text objects
+	text_state.setFont(verdana);
+	text_state.setPosition(constants::window_width / 2.0f - 100.f, constants::window_height / 2.0f - 100.f);
+	text_state.setCharacterSize(35);
+	text_state.setFillColor(sf::Color::White);
+	text_state.setString("Paused");
+
+	text_lives.setFont(verdana);
+	text_lives.setPosition(constants::window_width / 2.0f - 65.0f, constants::window_height / 2.0f - 50.0f);
+	text_lives.setCharacterSize(35);
+	text_lives.setFillColor(sf::Color::White);
+	text_lives.setString("Lives: " + std::to_string(lives));
 }
 
 // Reinitialize the game
 void game::reset()
 {
+	// Reset the number of lives
+	lives = constants::player_lives;
+
 	state = game_state::paused;
 
 	// Destroy all the entities and re-create them
@@ -147,37 +166,91 @@ void game::run()
 			reset();
 		}
 
-		// In the paused state, entities are not updated, only redrawn
-		if (state != game_state::paused)
+		// If the game is not running, the entities are not updated
+		// They are redrawn only if the game is paused
+		if (state == game_state::paused)
 		{
+			// Display the graphics
+			manager.draw(game_window);
+		}
+
+		// Choose the correct text for the state of the game
+		if (state != game_state::running)
+		{
+			switch (state)
+			{
+			case game_state::paused:
+				text_state.setString("	Paused	");
+				break;
+			case game_state::game_over:
+				text_state.setString("	Game Over!	");
+				break;
+			case game_state::player_wins:
+				text_state.setString("	Player Wins!	");
+				break;
+			default:
+				break;
+			}
+			
+			game_window.draw(text_state);
+			game_window.draw(text_lives);
+		}
+		else
+		{
+			// If there are no remaining balls on the screen
+			if (manager.get_all<ball>().empty())
+			{
+				// Spawn a new one and reduce the player's remaining lives
+				manager.create<ball>(constants::window_width / 2.0f, constants::window_height / 2.0f);
+				--lives;
+
+				state = game_state::paused;
+			}
+
+			// If there are no remaining bricks on the screen, the player has won!
+			if (manager.get_all<brick>().empty())
+			{
+				state = game_state::player_wins;
+			}
+
+			// If the player has used up all their lives, the game is over!
+			if (lives <= 0)
+			{
+				state = game_state::game_over;
+			}
+
+			// Update the text for the number of remaining lives
+			text_lives.setString("Lives: " + std::to_string(lives));
+
 			// Calculate the updated graphics
 			manager.update();
 
 			// For every ball, call a function which
-			// For every brick, call a function which
-			// Calls handle_collision with the ball and the brick as arguments
+			//		For every brick, call a function which
+			//			Calls handle_collision with the ball and the brick as arguments
 			manager.apply_all<ball>([this](auto& the_ball)
-			{
-				manager.apply_all<brick>([&the_ball](auto& the_brick)
 				{
-					handle_collision(the_ball, the_brick);
+					manager.apply_all<brick>([&the_ball](auto& the_brick)
+						{
+							handle_collision(the_ball, the_brick);
+						});
 				});
-			});
 
 			// Paddle interaction
 			manager.apply_all<ball>([this](auto& the_ball)
-			{
-				manager.apply_all<paddle>([&the_ball](auto& the_paddle)
 				{
-					handle_collision(the_ball, the_paddle);
+					manager.apply_all<paddle>([&the_ball](auto& the_paddle)
+						{
+							handle_collision(the_ball, the_paddle);
+						});
 				});
-			});
-			
-			manager.refresh();
-		}
 
-		// Display updated graphics
-		manager.draw(game_window);
+			manager.refresh();
+
+			// Display the updated graphics
+			manager.draw(game_window);
+				
+		}
 		game_window.display();
 	}
 }
